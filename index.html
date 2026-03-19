@@ -11,33 +11,28 @@
   <script src="https://inartaly.github.io/ivgsjs/ivgsjs.js"></script>
 
   <!-- HEIC decoder -->
-<script src="https://cdn.jsdelivr.net/npm/heic2any/dist/heic2any.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/heic2any/dist/heic2any.min.js"></script>
 </head>
 
 <body class="ivgs-pad-4 ivgs-flex-col ivgs-gap-4">
 
   <h1 class="ivgs-text-2xl ivgs-text-gradient">HEIC → JPG Converter</h1>
 
-<div id="dropzone" class="ivgs-dropzone">
-  <p>Drop HEIC file here or click to choose</p>
-  <input type="file" id="fileInput" accept=".heic" hidden>
-</div>
-
-<button id="convertBtn" class="ivgs-btn">Convert to JPG</button>
-
-<a id="downloadLink" class="ivgs-hidden ivgs-btn" download>Download JPG</a>
-
-<script src="https://cdn.jsdelivr.net/npm/heic2any/dist/heic2any.min.js"></script>
-<script src="app.js"></script>
+  <div id="dropzone" class="ivgs-dropzone">
+    <p>Drop HEIC file here or click to choose</p>
+    <input type="file" id="fileInput" accept=".heic" hidden>
+  </div>
 
   <button id="convertBtn" class="ivgs-btn ivgs-btn-primary">
     Convert to JPG
   </button>
 
-  <a id="downloadLink" class="ivgs-btn ivgs-btn-success ivgs-hidden">
+  <a id="downloadLink" class="ivgs-btn ivgs-btn-success ivgs-hidden" download>
     Download JPG
   </a>
 
+  <!-- Your app logic -->
   <script src="app.js"></script>
+
 </body>
 </html>
