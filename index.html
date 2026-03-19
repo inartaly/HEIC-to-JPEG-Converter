@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HEIC to JPG Converter</title>
+
+  <!-- IVGSCSS -->
+  <link rel="stylesheet" href="https://inartaly.github.io/ivgscss/ivgscss.css">
+
+  <!-- IVGSJS -->
+  <script src="https://inartaly.github.io/ivgsjs/ivgsjs.bundle.js"></script>
+
+  <!-- HEIC decoder -->
+  <script src="lib/heic2any.min.js"></script>
+</head>
+
+<body class="ivgs-pad-4 ivgs-flex-col ivgs-gap-4">
+
+  <h1 class="ivgs-text-2xl ivgs-text-gradient">HEIC → JPG Converter</h1>
+
+  <input id="fileInput" type="file" accept=".heic" class="ivgs-input" />
+
+  <button id="convertBtn" class="ivgs-btn ivgs-btn-primary">
+    Convert to JPG
+  </button>
+
+  <a id="downloadLink" class="ivgs-btn ivgs-btn-success ivgs-hidden">
+    Download JPG
+  </a>
+
+  <script src="app.js"></script>
+</body>
+</html>
