@@ -1,25 +1,45 @@
-// --- State ---
-const S = IVGSJS.state({
-  file: null,
-  outputBlob: null
+const S = {
+  file: null
+};
+
+const dropzone = IVGS.el("#dropzone");
+const fileInput = IVGS.el("#fileInput");
+const convertBtn = IVGS.el("#convertBtn");
+const downloadLink = IVGS.el("#downloadLink");
+
+// Click → open file dialog
+IVGS.on(dropzone, "click", () => fileInput.click());
+
+// File selected
+IVGS.on(fileInput, "change", (e) => {
+  S.file = e.target.files[0];
+  dropzone.querySelector("p").textContent = S.file.name;
 });
 
-// --- Elements ---
-const fileInput = IVGSJS.$("#fileInput");
-const convertBtn = IVGSJS.$("#convertBtn");
-const downloadLink = IVGSJS.$("#downloadLink");
-
-// --- File selection ---
-IVGSJS.on(fileInput, "change", (e) => {
-  S.file = e.target.files[0] || null;
-  S.outputBlob = null;
-  downloadLink.classList.add("ivgs-hidden");
+// Drag over
+IVGS.on(dropzone, "dragover", (e) => {
+  e.preventDefault();
+  dropzone.classList.add("ivgs-dropzone-hover");
 });
 
-// --- Convert ---
-IVGSJS.on(convertBtn, "click", async () => {
+// Drag leave
+IVGS.on(dropzone, "dragleave", () => {
+  dropzone.classList.remove("ivgs-dropzone-hover");
+});
+
+// Drop file
+IVGS.on(dropzone, "drop", (e) => {
+  e.preventDefault();
+  dropzone.classList.remove("ivgs-dropzone-hover");
+
+  S.file = e.dataTransfer.files[0];
+  dropzone.querySelector("p").textContent = S.file.name;
+});
+
+// Convert button
+IVGS.on(convertBtn, "click", async () => {
   if (!S.file) {
-    IVGSJS.toast("Please select a HEIC file first");
+    IVGS.toast("Please select a HEIC file first");
     return;
   }
 
@@ -30,16 +50,14 @@ IVGSJS.on(convertBtn, "click", async () => {
       quality: 0.9
     });
 
-    S.outputBlob = jpgBlob;
-
     const url = URL.createObjectURL(jpgBlob);
     downloadLink.href = url;
-    downloadLink.download = S.file.name.replace(".heic", ".jpg");
+    downloadLink.download = S.file.name.replace(/\.heic$/i, ".jpg");
     downloadLink.classList.remove("ivgs-hidden");
 
-    IVGSJS.toast("Conversion complete!");
+    IVGS.toast("Conversion complete!");
   } catch (err) {
     console.error(err);
-    IVGSJS.toast("Error converting file");
+    IVGS.toast("Error converting file");
   }
 });
