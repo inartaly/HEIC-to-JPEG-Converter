@@ -1,63 +1,62 @@
-const S = {
-  file: null
-};
+const { createApp } = Vue;
 
-const dropzone = IVGS.el("#dropzone");
-const fileInput = IVGS.el("#fileInput");
-const convertBtn = IVGS.el("#convertBtn");
-const downloadLink = IVGS.el("#downloadLink");
+createApp({
+  data() {
+    return {
+      file: null,
+      fileName: "",
+      downloadUrl: "",
+      downloadName: "",
+      status: "",
+    };
+  },
 
-// Click → open file dialog
-IVGS.on(dropzone, "click", () => fileInput.click());
+  methods: {
+    openFileDialog() {
+      document.querySelector("#fileInput").click();
+    },
 
-// File selected
-IVGS.on(fileInput, "change", (e) => {
-  S.file = e.target.files[0];
-  dropzone.querySelector("p").textContent = S.file.name;
-});
+    handleFileSelect(e) {
+      this.file = e.target.files[0];
+      this.fileName = this.file?.name || "";
+    },
 
-// Drag over
-IVGS.on(dropzone, "dragover", (e) => {
-  e.preventDefault();
-  dropzone.classList.add("ivgs-dropzone-hover");
-});
+    dragOver() {
+      document.querySelector("#dropzone").classList.add("hover");
+    },
 
-// Drag leave
-IVGS.on(dropzone, "dragleave", () => {
-  dropzone.classList.remove("ivgs-dropzone-hover");
-});
+    dragLeave() {
+      document.querySelector("#dropzone").classList.remove("hover");
+    },
 
-// Drop file
-IVGS.on(dropzone, "drop", (e) => {
-  e.preventDefault();
-  dropzone.classList.remove("ivgs-dropzone-hover");
+    handleDrop(e) {
+      document.querySelector("#dropzone").classList.remove("hover");
+      this.file = e.dataTransfer.files[0];
+      this.fileName = this.file?.name || "";
+    },
 
-  S.file = e.dataTransfer.files[0];
-  dropzone.querySelector("p").textContent = S.file.name;
-});
+    async convert() {
+      if (!this.file) {
+        this.status = "Please select a HEIC file first";
+        return;
+      }
 
-// Convert button
-IVGS.on(convertBtn, "click", async () => {
-  if (!S.file) {
-    IVGS.toast("Please select a HEIC file first");
-    return;
-  }
+      this.status = "Converting...";
 
-  try {
-    const jpgBlob = await heic2any({
-      blob: S.file,
-      toType: "image/jpeg",
-      quality: 0.9
-    });
+      try {
+        const jpgBlob = await heic2any({
+          blob: this.file,
+          toType: "image/jpeg",
+          quality: 0.9,
+        });
 
-    const url = URL.createObjectURL(jpgBlob);
-    downloadLink.href = url;
-    downloadLink.download = S.file.name.replace(/\.heic$/i, ".jpg");
-    downloadLink.classList.remove("ivgs-hidden");
-
-    IVGS.toast("Conversion complete!");
-  } catch (err) {
-    console.error(err);
-    IVGS.toast("Error converting file");
-  }
-});
+        this.downloadUrl = URL.createObjectURL(jpgBlob);
+        this.downloadName = this.file.name.replace(/\.heic$/i, ".jpg");
+        this.status = "Conversion complete!";
+      } catch (err) {
+        console.error(err);
+        this.status = "Error converting file";
+      }
+    },
+  },
+}).mount("#app");

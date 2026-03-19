@@ -1,38 +1,98 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>HEIC to JPG Converter</title>
 
-  <!-- IVGSCSS -->
-  <link rel="stylesheet" href="https://inartaly.github.io/ivgscss/ivgscss.css">
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#000000" />
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js");
+    }
+  </script>
 
-  <!-- IVGSJS -->
-  <script src="https://inartaly.github.io/ivgsjs/ivgsjs.js"></script>
+  <!-- Tailwind Dark Mode Config -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class'
+    }
+  </script>
+
+  <!-- TailwindCSS (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Vue 3 (CDN) -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 
   <!-- HEIC decoder -->
   <script src="https://cdn.jsdelivr.net/npm/heic2any/dist/heic2any.min.js"></script>
+
+  <style>
+    #dropzone {
+      border: 2px dashed #4b5563;
+      padding: 2rem;
+      text-align: center;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    #dropzone.hover {
+      border-color: #818cf8;
+      background: #1e1b4b;
+    }
+
+    #dropzone * {
+      pointer-events: none;
+    }
+  </style>
 </head>
 
-<body class="ivgs-pad-4 ivgs-flex-col ivgs-gap-4">
 
-  <h1 class="ivgs-text-2xl ivgs-text-gradient">HEIC → JPG Converter</h1>
+  <body class="min-h-screen bg-gray-900 p-6 transition">
+    <div
+      id="app"
+      class="relative max-w-md mx-auto bg-gray-800 p-6 rounded-xl shadow space-y-4 transition"
+    >
+      <h1 class="text-2xl font-bold text-indigo-400">HEIC → JPG Converter</h1>
 
-  <div id="dropzone" class="ivgs-dropzone">
-    <p>Drop HEIC file here or click to choose</p>
-    <input type="file" id="fileInput" accept=".heic" hidden>
-  </div>
+      <div
+        id="dropzone"
+        class="text-gray-300"
+        @click="openFileDialog"
+        @dragover.prevent="dragOver"
+        @dragleave="dragLeave"
+        @drop.prevent="handleDrop"
+      >
+        <p>{{ fileName || "Drop HEIC file here or click to choose" }}</p>
+        <input
+          type="file"
+          id="fileInput"
+          accept=".heic"
+          hidden
+          @change="handleFileSelect"
+        />
+      </div>
 
-  <button id="convertBtn" class="ivgs-btn ivgs-btn-primary">
-    Convert to JPG
-  </button>
+      <button
+        @click="convert"
+        class="w-full py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
+      >
+        Convert to JPG
+      </button>
 
-  <a id="downloadLink" class="ivgs-btn ivgs-btn-success ivgs-hidden" download>
-    Download JPG
-  </a>
+      <a
+        v-if="downloadUrl"
+        :href="downloadUrl"
+        :download="downloadName"
+        class="block w-full text-center py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
+      >
+        Download JPG
+      </a>
 
-  <!-- Your app logic -->
-  <script src="app.js"></script>
+      <p v-if="status" class="text-gray-400 text-sm">{{ status }}</p>
+    </div>
 
-</body>
+    <script src="app.js"></script>
+  </body>
 </html>
